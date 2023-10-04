@@ -1,0 +1,41 @@
+package Practise;
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+import io.github.bonigarcia.wdm.WebDriverManager;
+
+public class Broken_image_finder {
+
+	public static void main(String[] args) throws MalformedURLException, IOException {
+		WebDriverManager.chromedriver().setup();
+		WebDriver driver = new ChromeDriver();
+		driver.get("http://the-internet.herokuapp.com/broken_images");
+		List<WebElement> images= driver.findElements(By.tagName("img"));
+		for(WebElement image: images)
+		{
+		 String url=image.getAttribute("src");
+		 HttpURLConnection connection = (HttpURLConnection)new URL(url).openConnection();
+		 connection.setRequestMethod("HEAD");
+		 connection.connect();
+		int rescode= connection.getResponseCode();
+		System.out.println(rescode);
+		if(rescode>200)
+		{
+			System.out.println("the image is broken"+" "+"with responce code"+" "+ rescode);
+		}
+			
+		}
+
+	}
+
+}
+

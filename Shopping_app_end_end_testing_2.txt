@@ -1,0 +1,65 @@
+package Practise;
+
+import java.time.Duration;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
+
+import io.github.bonigarcia.wdm.WebDriverManager;
+
+public class Shopping_App_end_to_end_2 {
+
+	public static void main(String[] args) throws InterruptedException {
+WebDriverManager.chromedriver().setup();
+		
+		WebDriver driver= new ChromeDriver();
+		driver.manage().timeouts().implicitlyWait(10,TimeUnit.SECONDS);
+		driver.manage().window().maximize();
+		//driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+		driver.get("https://rahulshettyacademy.com/client");
+		driver.findElement(By.id("userEmail")).sendKeys("karthikakkasaligar@gmail.com");
+		driver.findElement(By.xpath("//input[@type='password']")).sendKeys("Karthik@312");
+		driver.findElement(By.cssSelector("input[value='Login']")).click();
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".mb-3")));
+		List<WebElement> Products= driver.findElements(By.cssSelector(".mb-3"));
+		WebElement Item= Products.stream().filter(s->s.findElement(By.cssSelector("b")).getText().equalsIgnoreCase("zara coat 3")).findFirst().orElse(null);
+		Item.findElement(By.cssSelector(".card-body button:last-of-type")).click();
+		Thread.sleep(3000);
+		driver.findElement(By.xpath("//button[@routerlink='/dashboard/cart']")).click();
+		List<WebElement> item2= driver.findElements(By.xpath("//div/h3[text()='zara coat 3']"));
+		Boolean match= item2.stream().anyMatch(s->s.getText().equalsIgnoreCase("zara coat 3"));
+		Assert.assertTrue(match);
+		driver.findElement(By.xpath("(//button[@type='button'])[2]")).click();
+		driver.findElement(By.xpath("(//input[@type='text'])[2]")).sendKeys("343");
+		driver.findElement(By.xpath("(//input[@type='text'])[3]")).sendKeys("Karthik");
+		driver.findElement(By.xpath("(//input[@type='text'])[4]")).sendKeys("rahulshettyacademy");
+		driver.findElement(By.xpath("//button[@type='submit']")).click();
+		Thread.sleep(3000);
+		driver.findElement(By.xpath("//input[@placeholder='Select Country']")).sendKeys("Ind");
+		Thread.sleep(500);
+	    List<WebElement> options= driver.findElements(By.xpath("//button[@type='button']"));
+	  for(WebElement option :options )
+	    {
+	    if(option.getText().equals("India"))
+	    	{
+	    		option.click();
+	    		break;
+	    	}
+	    }
+	  driver.findElement(By.xpath("//a[@class='btnn action__submit ng-star-inserted']")).click();
+	   String message= driver.findElement(By.cssSelector(".hero-primary")).getText();
+	    Assert.assertTrue(message.equalsIgnoreCase("THANKYOU FOR THE ORDER."));
+	    driver.quit();
+		
+
+	}
+
+}
